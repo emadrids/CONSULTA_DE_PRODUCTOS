@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Consulta de Productos con Imágenes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 1000px; margin: auto; }
+    input, select { padding: 8px; font-size: 16px; margin: 5px; }
+    table { width: 100%; margin-top: 20px; border-collapse: collapse; font-size: 14px; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+    th { background-color: #eee; }
+    button { padding: 8px 12px; margin: 10px 5px; }
+    img { width: 80px; height: auto; }
+  </style>
+</head>
+<body>
+
+  <h2>Consulta de productos con imagen</h2>
+  <input type="text" id="busqueda" placeholder="Código, descripción o código de barra">
+  <select id="departamento">
+    <option value="">Todos los departamentos</option>
+    <option value="AREA ESCOLAR">AREA ESCOLAR</option>
+    <option value="JUGUETERIA">JUGUETERIA</option>
+    <option value="BISUTERIA">BISUTERIA</option>
+  </select>
+
+  <button onclick="exportarExcel()">📤 Exportar a Excel</button>
+
+  <table id="tabla">
+    <thead>
+      <tr>
+        <th>Imagen</th>
+        <th>Código</th>
+        <th>Descripción</th>
+        <th>Precio</th>
+        <th>Docena</th>
+        <th>Cajón</th>
+        <th>Disponible</th>
+        <th>Departamento</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    function cargarResultados() {
+      const q = document.getElementById("busqueda").value;
+      const depto = document.getElementById("departamento").value;
+      fetch(`buscar.php?q=${encodeURIComponent(q)}&dpto=${encodeURIComponent(depto)}`)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector("#tabla tbody");
+          tbody.innerHTML = "";
+          data.forEach(row => {
+            tbody.innerHTML += \`
+              <tr>
+                <td><img src="https://tuusuario.github.io/repositorio/imagenes/\${row.ItemLookupCode}.jpg" onerror="this.style.display='none'"></td>
+                <td>\${row.ItemLookupCode}</td>
+                <td>\${row.Description}</td>
+                <td>\${parseFloat(row.Price).toFixed(2)}</td>
+                <td>\${parseFloat(row.PriceA).toFixed(2)}</td>
+                <td>\${parseFloat(row.PriceB).toFixed(2)}</td>
+                <td>\${row.Quantity}</td>
+                <td>\${row.DepartmentID}</td>
+              </tr>\`;
+          });
+        });
+    }
+
+    function exportarExcel() {
+      window.open(`exportar.php?q=${encodeURIComponent(document.getElementById("busqueda").value)}&dpto=${encodeURIComponent(document.getElementById("departamento").value)}`);
+    }
+
+    document.getElementById("busqueda").addEventListener("input", cargarResultados);
+    document.getElementById("departamento").addEventListener("change", cargarResultados);
+  </script>
+
+</body>
+</html>
