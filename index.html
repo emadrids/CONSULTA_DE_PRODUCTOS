@@ -47,36 +47,39 @@
     function cargarResultados() {
       const q = document.getElementById("busqueda").value;
       const depto = document.getElementById("departamento").value;
-      fetch(`buscar.php?q=${encodeURIComponent(q)}&dpto=${encodeURIComponent(depto)}`)
+      fetch(`http://26.74.155.227/consulta/buscar.php?q=${encodeURIComponent(q)}&dpto=${encodeURIComponent(depto)}`)
         .then(res => res.json())
         .then(data => {
           const tbody = document.querySelector("#tabla tbody");
           tbody.innerHTML = "";
           data.forEach(row => {
             const imgBase = `https://emadrids.github.io/CONSULTA_DE_PRODUCTOS/imagenes/${row.ItemLookupCode}`;
-            tbody.innerHTML += \`
+            tbody.innerHTML += `
               <tr>
                 <td>
-                  <img id="img_\${row.ItemLookupCode}" src="\${imgBase}.jpg" 
-                       onerror="this.onerror=null; this.src='\${imgBase}.jpeg'; 
+                  <img id="img_${row.ItemLookupCode}" src="${imgBase}.jpg" 
+                       onerror="this.onerror=null; this.src='${imgBase}.jpeg'; 
                        setTimeout(() => {
-                         if (!this.complete || this.naturalWidth === 0) this.src='\${imgBase}.png';
+                         if (!this.complete || this.naturalWidth === 0) this.src='${imgBase}.png';
+                         setTimeout(() => {
+                           if (!this.complete || this.naturalWidth === 0) this.src='https://emadrids.github.io/CONSULTA_DE_PRODUCTOS/imagenes/LOGO%20LA%20UNO.jpg';
+                         }, 100);
                        }, 100);">
                 </td>
-                <td>\${row.ItemLookupCode}</td>
-                <td>\${row.Description}</td>
-                <td>\${parseFloat(row.Price).toFixed(2)}</td>
-                <td>\${parseFloat(row.PriceA).toFixed(2)}</td>
-                <td>\${parseFloat(row.PriceB).toFixed(2)}</td>
-                <td>\${row.Quantity}</td>
-                <td>\${row.DepartmentID}</td>
-              </tr>\`;
+                <td>${row.ItemLookupCode}</td>
+                <td>${row.Description}</td>
+                <td>${parseFloat(row.Price).toFixed(2)}</td>
+                <td>${parseFloat(row.PriceA).toFixed(2)}</td>
+                <td>${parseFloat(row.PriceB).toFixed(2)}</td>
+                <td>${row.Quantity}</td>
+                <td>${row.DepartmentID}</td>
+              </tr>`;
           });
         });
     }
 
     function exportarExcel() {
-      window.open(`exportar.php?q=${encodeURIComponent(document.getElementById("busqueda").value)}&dpto=${encodeURIComponent(document.getElementById("departamento").value)}`);
+      window.open(`http://26.74.155.227/consulta/exportar.php?q=${encodeURIComponent(document.getElementById("busqueda").value)}&dpto=${encodeURIComponent(document.getElementById("departamento").value)}`);
     }
 
     document.getElementById("busqueda").addEventListener("input", cargarResultados);
